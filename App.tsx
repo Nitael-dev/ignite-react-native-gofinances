@@ -7,7 +7,7 @@ import {
   Poppins_700Bold,
 } from '@expo-google-fonts/poppins';
 import { ThemeProvider } from 'styled-components/native';
-import { Dashboard } from './src/screens/Dashboard';
+import { Register } from './src/screens/Register';
 import AppLoading from 'expo-app-loading';
 
 export const App = () => {
@@ -23,7 +23,7 @@ export const App = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Dashboard/>
+      <Register/>
     </ThemeProvider>
   )
 }
