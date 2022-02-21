@@ -48,7 +48,7 @@ export const Register = () => {
 
   const navigation = useNavigation<NavigationProps>();
 
-  const handleTransactionType = (type: 'up' | 'down') => {
+  const handleTransactionType = (type: 'positive' | 'negative') => {
     setTransactionType(type)
   }
   const handleOpenSelectCategoryModal = () => {
@@ -66,7 +66,7 @@ export const Register = () => {
       id: String(uuid.v4()),
       name: form.name,
       amount: form.amount,
-      transactionType,
+      type: transactionType,
       category: category.key,
       date: new Date()
     }
@@ -80,7 +80,6 @@ export const Register = () => {
       ]
 
       await AsyncStorage.setItem(dataKey, JSON.stringify(dataFormated));
-
       reset();
       setTransactionType('');
       setCategory({
@@ -96,7 +95,6 @@ export const Register = () => {
   useEffect(() => {
     const loadData = async() => {
       const data = await AsyncStorage.getItem(dataKey);
-      console.log(JSON.parse(data!));
     }
     // const removeAll = async () => {
     //   await AsyncStorage.removeItem(dataKey);
@@ -132,14 +130,14 @@ export const Register = () => {
               <TransactionTypeButton
                 type='up'
                 title='Income'
-                onPress={() => handleTransactionType('up')}
-                isActive={transactionType === 'up'}
+                onPress={() => handleTransactionType('positive')}
+                isActive={transactionType === 'positive'}
               />
               <TransactionTypeButton
                 title='Outcome'
                 type='down'
-                onPress={() => handleTransactionType('down')}
-                isActive={transactionType === 'down'}
+                onPress={() => handleTransactionType('negative')}
+                isActive={transactionType === 'negative'}
               />
             </TransactionsTypes>
 

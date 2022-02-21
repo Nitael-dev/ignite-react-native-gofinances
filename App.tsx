@@ -7,10 +7,13 @@ import {
   Poppins_700Bold,
 } from '@expo-google-fonts/poppins';
 import { ThemeProvider } from 'styled-components/native';
+import 'intl';
+import 'intl/locale-data/jsonp/pt-BR';
 import { NavigationContainer } from '@react-navigation/native';
 import AppLoading from 'expo-app-loading';
 import { AppRoutes } from './src/routes/app.routes';
 import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
+import { StatusBar } from 'react-native';
 
 export const App = gestureHandlerRootHOC(() => {
   const [fontsLoaded] = useFonts({
@@ -24,6 +27,7 @@ export const App = gestureHandlerRootHOC(() => {
   return (
     <ThemeProvider theme={theme}>
       <NavigationContainer >
+        <StatusBar barStyle='light-content'/>
         <AppRoutes/>
       </NavigationContainer>
     </ThemeProvider>
