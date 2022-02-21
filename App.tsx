@@ -14,6 +14,8 @@ import AppLoading from 'expo-app-loading';
 import { AppRoutes } from './src/routes/app.routes';
 import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
 import { StatusBar } from 'react-native';
+import { SignIn } from './src/screens/SignIn';
+import { AuthProvider } from './src/hooks/AuthContext';
 
 export const App = gestureHandlerRootHOC(() => {
   const [fontsLoaded] = useFonts({
@@ -28,7 +30,10 @@ export const App = gestureHandlerRootHOC(() => {
     <ThemeProvider theme={theme}>
       <NavigationContainer >
         <StatusBar barStyle='light-content'/>
-        <AppRoutes/>
+        {/* <AppRoutes/> */}
+        <AuthProvider>
+          <SignIn/>
+        </AuthProvider>
       </NavigationContainer>
     </ThemeProvider>
   )
