@@ -9,6 +9,7 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import { useTheme } from 'styled-components';
 import { VictoryPie } from 'victory-native';
 import { HistoryCard } from '../../components/HistoryCard';
+import { useAuth } from '../../hooks/AuthContext';
 import { categories } from '../../utils/categories';
 
 import { 
@@ -42,6 +43,7 @@ interface CategoryData {
 }
 
 export const Resume = () => {
+  const { user } = useAuth();
   const theme = useTheme();
 
   const [isLoading, setIsLoading] = React.useState(false);
@@ -59,7 +61,7 @@ export const Resume = () => {
 
   const loadData = async () => {
     setIsLoading(true);
-    const dataKey = '@gofinances:transactions';
+    const dataKey = `@gofinances:transactions_user:${user.id}`;
     const response = await AsyncStorage.getItem(dataKey)
     const responseFormatted = response ? JSON.parse(response) : [];
 

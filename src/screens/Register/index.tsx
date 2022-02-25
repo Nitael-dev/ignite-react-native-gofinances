@@ -19,6 +19,7 @@ import {
 } from './styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import { useAuth } from '../../hooks/AuthContext';
 
 const schema = Yup.object().shape({
   name: Yup.string().required('Nome é obrigatório'),
@@ -30,7 +31,8 @@ type NavigationProps = {
 }
 
 export const Register = () => {
-  const dataKey = '@gofinances:transactions';
+  const { user } = useAuth();
+  const dataKey = `@gofinances:transactions_user:${user.id}`;
   const [category, setCategory] = React.useState({
     key: 'Category',
     name: 'Categoria',
@@ -71,6 +73,7 @@ export const Register = () => {
       date: new Date()
     }
     try {
+      const dataKey = `@gofinances:transactions_user:${user.id}`;
       const data = await AsyncStorage.getItem(dataKey);
       const currentData = data ? JSON.parse(data) : [];
 

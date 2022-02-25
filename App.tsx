@@ -12,16 +12,18 @@ import 'intl/locale-data/jsonp/pt-BR';
 import AppLoading from 'expo-app-loading';
 import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
 import { StatusBar } from 'react-native';
-import { AuthProvider } from './src/hooks/AuthContext';
+import { AuthProvider, useAuth } from './src/hooks/AuthContext';
 import { Routes } from './src/routes';
 
 export const App = gestureHandlerRootHOC(() => {
+  const { userStorageLoading } = useAuth();
+
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
     Poppins_500Medium,
     Poppins_700Bold,
   });
-  if(!fontsLoaded) {
+  if(!fontsLoaded || userStorageLoading) {
     return <AppLoading/>
   }
   return (

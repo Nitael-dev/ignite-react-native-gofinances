@@ -5,6 +5,7 @@ import { ActivityIndicator } from 'react-native';
 import { useTheme } from 'styled-components';
 import { HighlightCard } from '../../components/HighlightCard';
 import { TransactionCardProps, TransectionCard } from '../../components/TransectionCard';
+import { useAuth } from '../../hooks/AuthContext';
 import {
   Container,
   Header,
@@ -42,10 +43,15 @@ const getLastTransactionDate = (
     collection: DataListProps[],
     type: 'positive' | 'negative'
   ) => {
+  const collectionFilttered = collection
+  .filter((transaction) => transaction.type === type);
+
+  if(collectionFilttered.length === 0)
+    return '0';
+
   const lastTransaction = new Date(Math
   .max
-  .apply(Math, collection
-  .filter((transaction) => transaction.type === type)
+  .apply(Math, collectionFilttered
   .map((transaction) => new Date(transaction.date).getTime())));
   return `${lastTransaction.getDate()} de ${lastTransaction.toLocaleString('pt-BR', {
     month: 'long',
@@ -53,6 +59,7 @@ const getLastTransactionDate = (
 }
 
 export const Dashboard = () => {
+  const { signOut, user } = useAuth();
   const theme = useTheme();
 
   const [isLoading, setIsLoading] = React.useState(true);
@@ -60,7 +67,7 @@ export const Dashboard = () => {
   const [highlightData, setHighlightData] = React.useState<HighlightData>({} as HighlightData);
 
   const loadTransactions = async () => {
-    const dataKey = '@gofinances:transactions';
+    const dataKey = `@gofinances:transactions_user:${user.id}`;
     const response = await AsyncStorage.getItem(dataKey);
     const transactions = response ? JSON.parse(response) : [];
 
@@ -94,10 +101,9 @@ export const Dashboard = () => {
       }
     })
 
-    
     const lastTransactionEntries = getLastTransactionDate(transactions, 'positive');
     const lastTransactionExpensive = getLastTransactionDate(transactions, 'negative');
-    const totalInterval = `01 a ${lastTransactionExpensive}`
+    const totalInterval = lastTransactionExpensive === '0' && lastTransactionEntries === '0' ? 'Não há transações' : `01 a ${lastTransactionExpensive !== '0' ? lastTransactionExpensive : lastTransactionEntries} `
     
     const total = entriesTotal - expensiveTotal;
     setHighlightData({
@@ -148,13 +154,13 @@ export const Dashboard = () => {
           <Header>
             <UserWrapper>
               <UserInfo>
-                <Photo source={{uri: "https://github.com/Nitael-dev.png"}}/>
+                <Photo source={{uri: user.photo}}/>
                 <User>
                   <UserGreeting>Olá,</UserGreeting>
-                  <UserName>Nitael</UserName>
+                  <UserName style={{textTransform: 'capitalize'}}>{user.name}</UserName>
                 </User>
               </UserInfo>
-              <LogoutButton onPress={() => {}}>
+              <LogoutButton onPress={signOut}>
                 <Icon name="power"/>
               </LogoutButton>
             </UserWrapper>
@@ -164,13 +170,13 @@ export const Dashboard = () => {
               type='up'
               title="Entradas"
               amount={highlightData.entries.amount}
-              lastTransaction={`Última entrada dia ${highlightData.expensives.lastTransaction}`}
+              lastTransaction={highlightData.entries.lastTransaction === '0' ? 'Não há transações' : `Última entrada dia ${highlightData.entries.lastTransaction}`}
             />
             <HighlightCard 
               type='down'
               title="Saída"
               amount={highlightData.expensives.amount}
-              lastTransaction={`Última saída dia ${highlightData.expensives.lastTransaction}`}
+              lastTransaction={highlightData.expensives.lastTransaction === '0' ? 'Não há transações' : `Última entrada dia ${highlightData.expensives.lastTransaction}`}
             />
             <HighlightCard 
               type='total'

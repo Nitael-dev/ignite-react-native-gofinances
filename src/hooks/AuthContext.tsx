@@ -28,6 +28,8 @@ interface IAuthContextData {
   user: User;
   signInWithGoogle(): Promise<void>;
   signInWithApple(): Promise<void>;
+  signOut(): Promise<void>;
+  userStorageLoading: boolean;
 }
 
 const AuthContext = React.createContext({} as IAuthContextData);
@@ -75,11 +77,13 @@ export const AuthProvider = ({
         ]
       })
       if(credential) {
+        const name = credential.fullName?.givenName!;
+        const photo = `https://ui-avatars.com/api/?name=${name}&length=1`;
         const userLogged = {
           id: String(credential.user),
           email: credential.email!,
-          name: credential.fullName?.givenName!,
-          photo: undefined
+          name,
+          photo,
         }
         setUser(userLogged);
         await AsyncStorage.setItem(userStorageKey, JSON.stringify(userLogged));
@@ -87,6 +91,11 @@ export const AuthProvider = ({
     } catch (error: any) {
       throw new Error(error);
     }
+  }
+
+  const signOut = async () => {
+    setUser({} as User);
+    await AsyncStorage.removeItem(userStorageKey);
   }
 
   React.useEffect(() => {
@@ -107,6 +116,8 @@ export const AuthProvider = ({
       user,
       signInWithGoogle,
       signInWithApple,
+      signOut,
+      userStorageLoading,
     }}>
       {children}
     </AuthContext.Provider>
